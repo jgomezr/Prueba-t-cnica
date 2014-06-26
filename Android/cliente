@@ -1,0 +1,6 @@
+las consideraciones de diseño según las condiciones dadas serían:
+
+1. El desarrollo debe ser responsive design para que se pueda adapatar a las pantallas de los dispositivos que se usen ya que si se quiere usar en tablets estas vienen en distintas resoluciones de pantallas y diferentes tamaños
+2. Como debe tener contenidos multimedia lo ideal sería hacerlo en HTML5 o Java Script y usar librerías Jquery que facilitarían el uso de la aplicación en sistemas Android
+3. tener la posibilidad de usar geolocalización ya sea por triangulación o por GPS, o en el caso en que el dispositivo no cuente con esta posibilidad seleccionar la zona geográfica donde se encuentra para que pueda brindarle una guía acorde a las condiciones propias de su entorno
+4. como la Guía es para personal no técnico la idea sería que fuera muy gráfica y que su funcionamiento fuera como un slider
