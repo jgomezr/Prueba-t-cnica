@@ -1,1 +1,194 @@
 algoritmo
+A)
+
+<?php
+$disco="tamaño disco";
+$gbdiv=$disco*1024;
+$cd=$gbdiv/700;
+
+echo "Necesitas $cd cd's para realizar el respaldo";
+?>
+
+B)
+<?php
+$horas_trabajadas="horas trabajadas";
+$vl_hora=2800;
+$vl_ad=2800*1.50;
+$extras=$horas_trabajadas-40;
+$vl_extras=$extras*$vl_ad;
+$normal=40*2800;
+
+if($horas_trabajadas<40){ echo "$horas_trabajadas*$vl_hora";
+}else{  echo "$normal+$vl_extras";}
+
+
+
+C)
+Generar un archivo TXT con nombre wordlist.txt, allí listar en cada renglón las palabras que se desean:
+
+supple
+supply
+surdus
+surely
+surers
+surest
+surety
+surfed
+surfer
+student
+college
+school
+institute
+
+Luego generar un archivo llamado config.php con el siguiente contenido:
+<?php
+    $MAX_ATTEMPTS = 7;
+    $WORDLISTFILE = 'wordlist.txt';
+?>
+
+después de esto generar un archivo de nombre functions.php en el cual pondremos lo siguiente:
+<?php
+    function fetchWordArray($wordFile)
+    {
+        $file = fopen($wordFile,'r');
+           if ($file)
+        {
+            $random_line = null;
+            $line = null;
+            $count = 0;
+            while (($line = fgets($file)) !== false) 
+            {
+                $count++;
+                if(rand() % $count == 0) 
+                {
+                      $random_line = trim($line);
+                }
+        }
+        if (!feof($file)) 
+        {
+            fclose($file);
+            return null;
+        }else 
+        {
+            fclose($file);
+        }
+    }
+        $answer = str_split($random_line);
+        return $answer;
+    }
+
+    function hideCharacters($answer)
+    {
+        $noOfHiddenChars = floor((sizeof($answer)/2) + 1);
+        $count = 0;
+        $hidden = $answer;
+        while ($count < $noOfHiddenChars )
+        {
+            $rand_element = rand(0,sizeof($answer)-2);
+            if( $hidden[$rand_element] != '_' )
+            {
+                $hidden = str_replace($hidden[$rand_element],'_',$hidden,$replace_count);
+                $count = $count + $replace_count;
+            }
+        }
+        return $hidden;
+    }
+
+    function checkAndReplace($userInput, $hidden, $answer)
+    {
+        $i = 0;
+        $wrongGuess = true;
+        while($i < count($answer))
+        {
+            if ($answer[$i] == $userInput)
+            {
+                $hidden[$i] = $userInput;
+                $wrongGuess = false;
+            }
+            $i = $i + 1;
+        }
+        if (!$wrongGuess) $_SESSION['attempts'] = $_SESSION['attempts'] - 1;
+        return $hidden;
+    }
+    
+    
+    function checkGameOver($MAX_ATTEMPTS,$userAttempts, $answer, $hidden)
+    {
+        if ($userAttempts >= $MAX_ATTEMPTS)
+            {
+                echo "Game Over. la palabra correcta era ";
+                foreach ($answer as $letter) echo $letter;
+                echo '<br><form action = "" method = "post"><input type = "submit" name' + 
+                  ' = "newWord" value = "Intenta otra palabra"/></form><br>';
+                die();
+            }
+            if ($hidden == $answer)
+            {
+                echo "Game Over. En efecto la palabra correcta era ";
+                foreach ($answer as $letter) echo $letter;
+                echo '<br><form action = "" method = "post"><input ' + 
+                  'type = "submit" name = "newWord" value = "Intenta otra palabra"/></form><br>';
+                die();
+            }
+    }
+?>
+
+Finalmente tendremos el archvio index.php en el cual ira lo siguiente:
+
+<?php session_start();?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//ES" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Ahorcado</title>
+</head>
+
+<body>
+<?php
+    include 'config.php';
+    include 'functions.php';
+    if (isset($_POST['newWord'])) unset($_SESSION['answer']);
+    if (!isset($_SESSION['answer']))
+    {
+        $_SESSION['attempts'] = 0;
+        $answer = fetchWordArray($WORDLISTFILE);
+        $_SESSION['answer'] = $answer;
+        $_SESSION['hidden'] = hideCharacters($answer);
+        echo 'Intentos restantes: '.($MAX_ATTEMPTS - $_SESSION['attempts']).'<br>';
+    }else
+    {
+        if (isset ($_POST['userInput']))
+        {
+            $userInput = $_POST['userInput'];
+            $_SESSION['hidden'] = checkAndReplace(strtolower($userInput), $_SESSION['hidden'], $_SESSION['answer']);
+            checkGameOver($MAX_ATTEMPTS,$_SESSION['attempts'], $_SESSION['answer'],$_SESSION['hidden']);
+        }
+        $_SESSION['attempts'] = $_SESSION['attempts'] + 1;
+        echo 'Attempts remaining: '.($MAX_ATTEMPTS - $_SESSION['attempts'])."<br>";
+    }
+    $hidden = $_SESSION['hidden'];
+    foreach ($hidden as $char) echo $char."  ";
+?>
+<script type="application/javascript">
+    function validateInput()
+    {
+    var x=document.forms["inputForm"]["userInput"].value;
+    if (x=="" || x==" ")
+      {
+          alert("Por favor ingresa una letra.");
+          return false;
+      }
+    if (!isNaN(x))
+    {
+        alert("Por favor ingresa una letra.");
+        return false;
+    }
+}
+</script>
+<form name = "inputForm" action = "" method = "post">
+Ingresa tu intento: <input name = "userInput" type = "text" size="1" maxlength="1"  />
+<input type = "submit"  value = "Verificar" onclick="return validateInput()"/>
+<input type = "submit" name = "newWord" value = "Intenta otra palabra"/>
+</form>
+</body>
+</html>
