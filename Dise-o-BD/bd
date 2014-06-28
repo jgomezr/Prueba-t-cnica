@@ -1,1 +1,56 @@
-afgv
+
+La estructura de la BD para el problema planteado es la siguiente
+
+Id cliente
+cliente
+Dirección
+Nit
+Teléfono
+Contacto
+
+Id pedido
+Item
+Cantidad
+Precio unitario
+Precio total
+
+Id asociación
+Nombre asociación
+Ubicación
+cantidad de asociados
+productos
+capacidad
+precio producto
+
+Id asociado
+nombre asociado
+ubicación asociado
+productos
+capacidad
+precio producto
+tiempo de entrega
+
+Id asignacion
+nombre asociado
+producto
+cantidad
+valor
+tiempo de entrega
+Id pedido
+
+Id-pedido-asignacion
+Id asignacion
+Id pedido
+
+Id_asignacion_asociado_asociacion
+Id asignacion
+Id asociado
+Id asociación
+
+Id_pedido_cliente
+Id pedido
+Id cliente
+
+Esta BD nos permitiría poder tener trazabilidad del pedido al asociado y viceversa, tambien nos permitiría tener una registro de cada una de las transacciones que se realicen y el tiempo de respuesta según el producto y productor.
+
+adicional permitiría tener un dashboard con toda la información que ALSUR necesita para dar respuesta a cualquier tipo de requerimiento y tomar medidas para cumplir con los pedidos realizados
